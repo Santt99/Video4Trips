@@ -1,0 +1,23 @@
+{
+  "name": "video3trips",
+  "version": "0.0.1",
+  "description": "Program that makes a video from videos an fotos",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Santt99/Video4Trips.git"
+  },
+  "author": "Santiago Juarez",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Santt99/Video4Trips/issues"
+  },
+  "homepage": "https://github.com/Santt99/Video4Trips#readme",
+  "devDependencies": {
+    "nodemon": "^1.18.10"
+  }
+}
