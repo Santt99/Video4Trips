@@ -4,7 +4,7 @@ const server = require("http").Server(app)
 const expressLayouts = require('express-ejs-layouts')
 
 //Variables
-const PORT = 80
+const PORT = process.env.PORT || 80 
 
 //EJS
 app.use(expressLayouts)
