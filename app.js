@@ -19,7 +19,7 @@ io.on('connection', function(socket){
     console.log('a user connected');
     socket.on('media',(data)=>{
         if(data.length > 0){
-
+            console.log(data)
         }else{
             socket.emit("error")
         }
