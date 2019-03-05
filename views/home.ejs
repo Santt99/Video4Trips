@@ -17,6 +17,7 @@
     
     <script>
         var socket = io();
+        document.getElementById("inputFiles").value = null
         function verifications(){
             if(document.getElementById("inputFiles").value != null){
                 document.getElementById("makeVideoButton").className = 'btn btn-primary'
