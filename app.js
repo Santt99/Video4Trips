@@ -17,6 +17,13 @@ app.use('/',require('./routes/index'))
 // sockets 
 io.on('connection', function(socket){
     console.log('a user connected');
+    socket.on('media',(data)=>{
+        if(length(data) > 0){
+
+        }else{
+            socket.emit("error")
+        }
+    })
 });
 
 server.listen(PORT,console.log(`Server Listening to PORT ${PORT}`))
