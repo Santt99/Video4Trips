@@ -17,6 +17,11 @@
     "url": "https://github.com/Santt99/Video4Trips/issues"
   },
   "homepage": "https://github.com/Santt99/Video4Trips#readme",
+  "dependencies": {
+    "ejs": "^2.6.1",
+    "express": "^4.16.4",
+    "express-ejs-layouts": "^2.5.0"
+  },
   "devDependencies": {
     "nodemon": "^1.18.10"
   }
