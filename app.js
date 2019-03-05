@@ -18,7 +18,7 @@ app.use('/',require('./routes/index'))
 io.on('connection', function(socket){
     console.log('a user connected');
     socket.on('media',(data)=>{
-        if(length(data) > 0){
+        if(data.length > 0){
 
         }else{
             socket.emit("error")

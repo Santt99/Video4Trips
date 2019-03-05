@@ -18,11 +18,14 @@
     <script>
         var socket = io();
         function verifications(){
-            if(document.getElementById("inputFiles").value != ''){
+            if(document.getElementById("inputFiles").value != null){
                 document.getElementById("makeVideoButton").className = 'btn btn-primary'
             }
         }
-                
+        function sendFiles(){
+            data = getElementById("inputFiles").value
+            socket.emit('media',data)
+        }    
     </script>
 </body>
 </html>
