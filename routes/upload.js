@@ -25,32 +25,8 @@ let mark ='&maptype=mapnik&markers='
 router.post('/', upload.array('files'), async (req, res, next) => {
     let files = req.files
     await makeVideo(files,async (videosMetadata)=>{
-        
-        let mapVideos = []
-        let photoVideos = []
-        let videoOrder = []
-        for(let video of videosMetadata){
-            if(video.typeofVideo == 'map'){
-                mapVideos.push(video)
-            }else{
-                photoVideos.push(video)
-            }
-        }
-        for(let video of mapVideos){
-            if(video.position == 'none'){
-                videoOrder.push(video.path)
-                continue
-            }else{
-                videoOrder.push(video.path)
-                for(let videoPhoto of photoVideos){
-                    if(video.position == videoPhoto.position){
-                        videoOrder.push(video.path)
-                        videoOrder.push(video.path)
-                    }
-                }
-            }
-        }
-        console.log(videoOrder)
+        await deleteFilesFromDirectory(files)
+        let videoOrder = await orderVideos(videosMetadata())
         await concat({
             output: 'test.mp4',
             videos: videoOrder,
@@ -59,13 +35,40 @@ router.post('/', upload.array('files'), async (req, res, next) => {
                 duration: 500
             }
             })
-        
+            res.write("Done")
+            res.end()
     })
     
-    await deleteFilesFromDirectory(files)
-    res.write("Done")
-    res.end()
+    
+    
 })
+
+function orderVideos(videosMetadata){
+    let mapVideos = []
+    let photoVideos = []
+    let videoOrder = []
+    for(let video of videosMetadata){
+        if(video.typeofVideo == 'map'){
+            mapVideos.push(video)
+        }else{
+            photoVideos.push(video)
+        }
+    }
+    for(let video of mapVideos){
+        if(video.position == 'none'){
+            videoOrder.push(video.path)
+            continue
+        }else{
+            videoOrder.push(video.path)
+            for(let videoPhoto of photoVideos){
+                if(video.position == videoPhoto.position){
+                    videoOrder.push(videoPhoto.path)
+                }
+            }
+        }
+    }
+    return videoOrder
+}
 let a = 0
 let rescalePhoto = async function (image) {
     let file = {
