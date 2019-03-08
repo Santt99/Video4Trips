@@ -24,135 +24,150 @@ let mark ='&maptype=mapnik&markers='
 
 router.post('/', upload.array('files'), async (req, res, next) => {
     let files = req.files
-    await makeVideo(files,async (videosMetadata)=>{
+    await makeVideo(files).then(async (videoOrder)=>{
         await deleteFilesFromDirectory(files)
-        let videoOrder = await orderVideos(videosMetadata())
-        await concat({
-            output: 'test.mp4',
-            videos: videoOrder,
-            transition: {
-                name: 'directionalWipe',
-                duration: 500
-            }
-            })
-            res.write("Done")
-            res.end()
+        res.write('done')
+        res.end()
     })
-    
-    
     
 })
 
 function orderVideos(videosMetadata){
-    let mapVideos = []
-    let photoVideos = []
-    let videoOrder = []
-    for(let video of videosMetadata){
-        if(video.typeofVideo == 'map'){
-            mapVideos.push(video)
-        }else{
-            photoVideos.push(video)
+    return new Promise( async (resolve, reject) =>{
+        let mapVideos = []
+        let photoVideos = []
+        let videoOrder = []
+        for(let video of videosMetadata){
+            if(video.typeofVideo == 'map'){
+                mapVideos.push(video)
+            }else{
+                photoVideos.push(video)
+            }
         }
-    }
-    for(let video of mapVideos){
-        if(video.position == 'none'){
-            videoOrder.push(video.path)
-            continue
-        }else{
-            videoOrder.push(video.path)
-            for(let videoPhoto of photoVideos){
-                if(video.position == videoPhoto.position){
-                    videoOrder.push(videoPhoto.path)
+        for(let video of mapVideos){
+            if(video.position == 'none'){
+                videoOrder.push(video.path)
+                continue
+            }else{
+                videoOrder.push(video.path)
+                for(let videoPhoto of photoVideos){
+                    if(video.position == videoPhoto.position){
+                        videoOrder.push(videoPhoto.path)
+                    }
                 }
             }
         }
-    }
-    return videoOrder
+        resolve(videoOrder)
+    })
+    
+    
 }
 let a = 0
 let rescalePhoto = async function (image) {
-    let file = {
-        path: '',
-        type: '',
-        position: '',
-        typeofVideo: ''
-    }
-    if(image.extension = 'image'){
-        Jimp.read(image.path, (err, lenna) => {
-            if (err) throw err;
-            lenna
-            .resize(1024, 576) // resize
-            .quality(100) // set JPEG quality
-            .write(__dirname + `/../files/i${a}.png`); // save
-            file.path = __dirname + `/../files/i${a}.png`
-            file.type = 'image'
-            file.position = image.position
-            file.typeofVideo = 'photo'
-            a++ 
-        });
-        
-        
-    }else{
-        file.path = __dirname + `/../files/v${a}.png`
-        file.type = 'video'
-        file.position = image.position
-        file.typeofVideo = 'photo'
-    }
-    return file
-}
-let generateVideosFromImages = async function(file){
-    return new Promise( (resolve, reject) =>{
-        let videoTemplate = {
+        let file = {
             path: '',
+            type: '',
             position: '',
             typeofVideo: ''
         }
-        FfmpegCommand()
-                .input(file.path)
-                .loop(4)
-                .save(__dirname + `/../files/v${a}.mp4`)
-                .on('end', () =>{ 
-                })
-        videoTemplate.position = file.position
-        videoTemplate.path = (__dirname + `/../files/v${a}.mp4`)
-        videoTemplate.typeofVideo = file.typeofVideo
-        a++
-        resolve(videoTemplate) 
+        if(image.extension = 'image'){
+            Jimp.read(image.path, (err, lenna) => {
+                if (err) throw err;
+                lenna
+                .resize(1024, 576) // resize
+                .quality(100) // set JPEG quality
+                .write(__dirname + `/../files/i${a}.png`); // save
+                file.path = __dirname + `/../files/i${a}.png`
+                file.type = 'image'
+                file.position = image.position
+                file.typeofVideo = 'photo'
+                a++ 
+            });
+            
+            
+        }else{
+            file.path = __dirname + `/../files/v${a}.png`
+            file.type = 'video'
+            file.position = image.position
+            file.typeofVideo = 'photo'
+        }
+            
+    return file
+    
+}
+let generateVideosFromImages = async function(photos){
+    return new Promise( async (resolve, reject) =>{
+        let videos = []
+        for(let file of photos){
+            await convertImageToVideo(file)
+            
+            let videoTemplate = {
+                path: '',
+                position: '',
+                typeofVideo: ''
+            }
+            videoTemplate.position = file.position
+            videoTemplate.path = (__dirname + `/../files/v${a}.mp4`)
+            videoTemplate.typeofVideo = file.typeofVideo
+            a++
+            videos.push(videoTemplate)
+        }
+        resolve(videos) 
     })
         
 }
+function convertImageToVideo(file){
+    return new Promise(async (resolve, reject) =>{
+        await FfmpegCommand().input(file.path).loop(4).save(__dirname + `/../files/v${a}.mp4`).on('end', () =>{ })
+        resolve('done')
+    })        
+}
 async function cocatenateVideo(files){
-    
-        
-    
+    return new Promise( async (resolve, reject) =>{
+        await concat({
+            output: __dirname + '/../files/test.mp4',
+            videos: files,
+            transition: {
+                name: 'directionalWipe',
+                duration: 500
+            }
+        })
+    })
     
 }
-async function makeVideo(files, callback){
-    let filesMetaData = []
-    let videosMetadata = []
-    let a = 0
-    for (let file of files){  
-        filesMetaData.push(await extractMetadata(file))  
-    }
+async function makeVideo(files){
+    return new Promise( async (resolve, reject) =>{
+        let filesMetaData = []
+        let vidMetadata = []
+        let a = 0
+        for (let file of files){  
+            filesMetaData.push(await extractMetadata(file))  
+        }
 
-    //Oreder files
-    filesMetaData = await orderFiles(filesMetaData)
+        //Oreder files
+        filesMetaData = await orderFiles(filesMetaData)
 
-    //Rescale image
-    let rescaledImages = []
-    for (let image of filesMetaData) {
-        rescaledImages.push(await rescalePhoto(image))
-    }
+        //Rescale image
+        let rescaledImages = []
+        
+        for (let image of filesMetaData) {
+            rescaledImages.push(await rescalePhoto(image))
+        }
 
-    //Download Map Images
-    await downloadMapImages(rescaledImages,filesMetaData)
+        //Download Map Images
+        await downloadMapImages(rescaledImages,filesMetaData)
 
+        await generateVideosFromImages(rescaledImages).then((response)=>{
+
+            
+            orderVideos(response).then((videoOrder)=>{
+                resolve(videoOrder)
+            })
+            
+        })
+        
+    })
     
-    //Make Videos From Images
-    for(let image of rescaledImages){
-        videosMetadata.push(await generateVideosFromImages(image))
-    }
-    callback(videosMetadata)
     
 }
 
