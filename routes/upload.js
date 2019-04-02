@@ -9,6 +9,7 @@ const imageDownload = require('image-download');
 const imageType = require('image-type');
 const  Jimp = require('jimp');
 const concat = require('ffmpeg-concat')
+const sleep = require('system-sleep')
 
 var FfmpegCommand = require('fluent-ffmpeg');
 
@@ -23,11 +24,31 @@ let mark ='&maptype=mapnik&markers='
 
 
 router.post('/', upload.array('files'), async (req, res, next) => {
+    a = 0
     let files = req.files
     await makeVideo(files).then(async (videoOrder)=>{
-        await deleteFilesFromDirectory(files)
-        res.write('done')
-        res.end()
+        sleep(20000)
+        console.log(videoOrder)
+        var options = {
+            output: 'video.mp4',
+            videos: [],
+            transition: {
+              name: 'swap',
+              duration: 100
+            }
+        }
+        options.videos = videoOrder
+
+        await cocatenateVideo(options).then((finalVideo)=>{
+            
+                sleep(20000)
+                res.sendFile(__dirname + `/../video.mp4`)
+                res.end()
+                
+            
+            
+        })
+        
     })
     
 })
@@ -51,7 +72,7 @@ function orderVideos(videosMetadata){
             }else{
                 videoOrder.push(video.path)
                 for(let videoPhoto of photoVideos){
-                    if(video.position == videoPhoto.position){
+                    if(video.position == videoPhoto.positiobreakn){
                         videoOrder.push(videoPhoto.path)
                     }
                 }
@@ -124,14 +145,9 @@ function convertImageToVideo(file){
 }
 async function cocatenateVideo(files){
     return new Promise( async (resolve, reject) =>{
-        await concat({
-            output: __dirname + '/../files/test.mp4',
-            videos: files,
-            transition: {
-                name: 'directionalWipe',
-                duration: 500
-            }
-        })
+        sleep(10000)
+        await concat(files)
+        resolve('done')
     })
     
 }
@@ -158,10 +174,11 @@ async function makeVideo(files){
         await downloadMapImages(rescaledImages,filesMetaData)
 
         await generateVideosFromImages(rescaledImages).then((response)=>{
-
             
-            orderVideos(response).then((videoOrder)=>{
-                resolve(videoOrder)
+            orderVideos(response).then(async (videoOrder)=>{
+               
+                    resolve(videoOrder)
+                
             })
             
         })
@@ -213,7 +230,16 @@ async function deleteFilesFromDirectory(files){
     return new Promise(resolve => {
         for (const file of files) {
             fs.unlink(file.path, err => {
-            if (err) throw err;
+            if (err) {
+                fs.unlink(file, err => {
+                    if (err) {
+                        fs.unlink(files, err => {
+                            resolve('resolved');
+                        })
+                    }
+                    resolve('resolved');
+                })
+            };
             })
         }
         resolve('resolved');
