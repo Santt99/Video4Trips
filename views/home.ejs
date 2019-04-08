@@ -1,20 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=360, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Home</title>
-    
-</head>
-<body>
-    <h1 style="padding-top: 5%; text-align: center">Welcome to the video trip generator, plis upload the files that you want us to use to make your video!!</h1>
-    <div class="form-group" style="padding-top: 30%; margin-left: 0%;">
-        <form action="/upload" method="POST" enctype="multipart/form-data">
-            <input type="file" class="form-control-file" id="files" name="files" aria-describedby="fileHelp" multiple style=" margin-left: 15%" required> </input>
-            <small id="fileHelp" class="form-text text-muted" style=" margin-left: 5%">Select the Photos and Videos that yo want on your trip video.</small>
-            <button type="submit" id="makeVideoButton" class="btn btn-primary" style=" margin-top: 75%; margin-left: 35%">Make Video!!!</button>
-        </form>
+  </head>
+  <body>
+    <div class="container-fluid">
+      <div class="row-1">
+        <div class="col-sm">
+          <h1 style="text-align: center; margin-top: 25%;">Video4Trips</h1>
+        </div>
+        <div class="row-2" style="margin-top: 25%;">
+          <div class="col-sm">
+            <div class="custom-file">
+              <div class="container">
+                <form
+                  action="/upload"
+                  method="POST"
+                  enctype="multipart/form-data"
+                >
+                  <input
+                    type="file"
+                    class="custom-file-input"
+                    id="files"
+                    aria-describedby="inputGroupFileAddon01"
+                    d="files"
+                    name="files"
+                    multiple
+                  />
+                  <label class="custom-file-label" for="inputGroupFile01"
+                    >Choose file</label
+                  >
+                  <div class="container">
+                    <div class="colum-sm">
+                      <button
+                        type="submit"
+                        class="btn btn-primary"
+                        style="margin-top: 25%;"
+                      >
+                        Make my Video!!!
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-</body>
+  </body>
 </html>
