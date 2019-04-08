@@ -11,45 +11,38 @@
   </head>
   <body>
     <div class="container-fluid">
-      <div class="row-1">
+      <div class="row-2">
         <div class="col-sm">
           <h1 style="text-align: center; margin-top: 25%;">Video4Trips</h1>
         </div>
-        <div class="row-2" style="margin-top: 25%;">
-          <div class="col-sm">
-            <div class="custom-file">
-              <div class="container">
-                <form
-                  action="/upload"
-                  method="POST"
-                  enctype="multipart/form-data"
+      </div>
+      <div class="row-2" style="margin-top: 25%;">
+        <div class="col-sm">
+          <div class="custom-file">
+            <form action="/upload" method="POST" enctype="multipart/form-data">
+              <input
+                type="file"
+                class="custom-file-input"
+                id="files"
+                aria-describedby="inputGroupFileAddon01"
+                d="files"
+                name="files"
+                multiple
+                required
+              />
+              <label class="custom-file-label" for="inputGroupFile01"
+                >Choose file</label
+              >
+              <div class="container" style="text-align: center;">
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  style="margin-top: 25%; "
                 >
-                  <input
-                    type="file"
-                    class="custom-file-input"
-                    id="files"
-                    aria-describedby="inputGroupFileAddon01"
-                    d="files"
-                    name="files"
-                    multiple
-                  />
-                  <label class="custom-file-label" for="inputGroupFile01"
-                    >Choose file</label
-                  >
-                  <div class="container">
-                    <div class="colum-sm">
-                      <button
-                        type="submit"
-                        class="btn btn-primary"
-                        style="margin-top: 25%;"
-                      >
-                        Make my Video!!!
-                      </button>
-                    </div>
-                  </div>
-                </form>
+                  Make my Video!!!
+                </button>
               </div>
-            </div>
+            </form>
           </div>
         </div>
       </div>
